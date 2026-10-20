@@ -2,37 +2,56 @@
 (() => {
 const G=window.MISPLACED,S=G.state,U=G.ui;
 G.updateObjectiveHud=()=>{if(S.role==='monster'){const alive=G.bots.filter(b=>b.role==='survivor'&&b.alive).length;U.objectiveCount.textContent=`${4-alive} / 4`;}else{U.objectiveCount.textContent=`${G.player.cells} / 3`;U.objectiveText.textContent=G.player.cells<3?'ENCONTRE AS CÉLULAS':'VÁ PARA A EXTRAÇÃO';}};
-G.updateStatusHud=()=>{if(S.role==='monster'){U.statusValue.textContent=G.player.doorAction?'INTERAGINDO':G.player.attackCooldown>0?'RECUPERANDO':'CAÇANDO';U.statusWrap.classList.toggle('danger',false);}else{U.statusValue.textContent=G.player.doorAction?'INTERAGINDO':G.player.hitBoost>0?'ADRENALINA':G.player.health===2?'ESTÁVEL':G.player.health===1?'FERIDO':'MORTO';U.statusWrap.classList.toggle('danger',G.player.health<2&&G.player.hitBoost<=0);}};
+G.updateStatusHud=()=>{
+  const p=G.player,stunned=(p.stun||0)>0;
+  if(S.role==='monster'){
+    U.statusValue.textContent=stunned?'ATORDOADO':p.doorAction?'INTERAGINDO':p.attackCooldown>0?'RECUPERANDO':'CAÇANDO';
+    U.statusWrap.classList.toggle('danger',stunned);
+  }else{
+    U.statusValue.textContent=stunned?'ATORDOADO':p.doorAction?'INTERAGINDO':p.hitBoost>0?'ADRENALINA':p.health===2?'ESTÁVEL':p.health===1?'FERIDO':'MORTO';
+    U.statusWrap.classList.toggle('danger',stunned||(p.health<2&&p.hitBoost<=0));
+  }
+};
 G.finishRound=(win,title,text)=>{if(S.roundEnded)return;S.roundEnded=true;S.running=false;G.cancelDoorAction?.(G.player);U.resultTitle.textContent=title;U.resultText.textContent=text;U.resultTitle.style.color=win?'#d8ddd2':'#b96861';U.result.classList.add('visible');U.mobile.classList.add('hidden');};
-function start(role){S.role=role;S.roundEnded=false;const p=G.player;p.role=role;p.stamina=100;p.health=2;p.invuln=0;p.attackCooldown=0;p.kills=0;p.cells=0;p.noise=0;p.hitBoost=0;p.doorAction=null;if(role==='monster'){p.x=610;p.y=660;p.speed=102;p.runSpeed=150;}else{p.x=610;p.y=360;p.speed=92;p.runSpeed=142;}G.doors.forEach((d,i)=>d.open=i===1||i===2);G.cells.forEach(c=>c.collected=false);G.spawnBots();U.menu.classList.remove('visible');U.result.classList.remove('visible');U.hud.classList.remove('hidden');U.mobile.classList.toggle('hidden',matchMedia('(pointer:fine)').matches);U.attackBtn.classList.toggle('hidden',role!=='monster');U.roleLabel.textContent=role==='monster'?'THE MISPLACED':'SOBREVIVENTE';U.objectiveText.textContent=role==='monster'?'ELIMINE OS SOBREVIVENTES':'ENCONTRE AS CÉLULAS';G.updateObjectiveHud();G.updateStatusHud();S.running=true;S.last=performance.now();tryLandscape();}
+function start(role){
+  S.role=role;S.roundEnded=false;const p=G.player;
+  p.role=role;p.stamina=100;p.health=2;p.invuln=0;p.attackCooldown=0;p.kills=0;p.cells=0;p.noise=0;p.hitBoost=0;p.doorAction=null;p.stun=0;p.mobilityCooldown=0;
+  if(role==='monster'){p.x=610;p.y=660;p.speed=102;p.runSpeed=150;}else{p.x=610;p.y=360;p.speed=92;p.runSpeed=142;}
+  G.doors.forEach((d,i)=>d.open=i===1||i===2);G.cells.forEach(c=>c.collected=false);G.resetInteractables?.();G.spawnBots();
+  U.menu.classList.remove('visible');U.result.classList.remove('visible');U.hud.classList.remove('hidden');U.mobile.classList.toggle('hidden',matchMedia('(pointer:fine)').matches);U.attackBtn.classList.toggle('hidden',role!=='monster');
+  U.roleLabel.textContent=role==='monster'?'THE MISPLACED':'SOBREVIVENTE';U.objectiveText.textContent=role==='monster'?'ELIMINE OS SOBREVIVENTES':'ENCONTRE AS CÉLULAS';
+  G.updateObjectiveHud();G.updateStatusHud();S.running=true;S.last=performance.now();tryLandscape();
+}
 function menu(){S.running=false;S.roundEnded=false;G.cancelDoorAction?.(G.player);U.menu.classList.add('visible');U.result.classList.remove('visible');U.hud.classList.add('hidden');U.mobile.classList.add('hidden');}
 async function tryLandscape(){if(!matchMedia('(pointer:coarse)').matches)return;try{if(document.documentElement.requestFullscreen&&!document.fullscreenElement)await document.documentElement.requestFullscreen();}catch{}try{await screen.orientation?.lock?.('landscape');}catch{}}
 function nearCell(){let best=null,bd=999;for(const c of G.cells){if(c.collected)continue;const d=Math.hypot(G.player.x-c.x,G.player.y-c.y);if(d<38&&d<bd){best=c;bd=d;}}return best;}
 function interact(){
-  if(G.player.doorAction)return;
+  const p=G.player;if(p.doorAction||(p.stun||0)>0)return;
   if(S.role==='survivor'){
-    const c=nearCell();if(c){c.collected=true;G.player.cells++;G.showToast('CÉLULA DE ENERGIA RECUPERADA');S.shake=1.4;G.updateObjectiveHud();return;}
-    if(G.player.cells===3&&Math.hypot(G.player.x-G.extraction.x,G.player.y-G.extraction.y)<42){G.finishRound(true,'VOCÊ ESCAPOU','A energia respondeu. Você conseguiu deixar Blackridge.');return;}
+    const c=nearCell();if(c){c.collected=true;p.cells++;G.showToast('CÉLULA DE ENERGIA RECUPERADA');S.shake=1.4;G.updateObjectiveHud();return;}
+    if(p.cells===3&&Math.hypot(p.x-G.extraction.x,p.y-G.extraction.y)<42){G.finishRound(true,'VOCÊ ESCAPOU','A energia respondeu. Você conseguiu deixar Blackridge.');return;}
   }
-  const d=G.nearDoorRaw?G.nearDoorRaw(G.player):G.nearDoor(G.player);
-  if(d)G.requestDoor?G.requestDoor(G.player,d,!d.open):(d.open=!d.open);
+  if(G.tryContextInteract?.(p))return;
+  const d=G.nearDoorRaw?G.nearDoorRaw(p):G.nearDoor(p);if(d)G.requestDoor?G.requestDoor(p,d,!d.open):(d.open=!d.open);
 }
 function keyboard(){let x=0,y=0;if(S.keys.has('KeyA')||S.keys.has('ArrowLeft'))x--;if(S.keys.has('KeyD')||S.keys.has('ArrowRight'))x++;if(S.keys.has('KeyW')||S.keys.has('ArrowUp'))y--;if(S.keys.has('KeyS')||S.keys.has('ArrowDown'))y++;if(x||y){const l=Math.hypot(x,y);x/=l;y/=l;}if(!S.touchActive){S.input.x=x;S.input.y=y;}S.input.sprint=S.keys.has('ShiftLeft')||S.keys.has('ShiftRight')||S.sprintHeld;}
 function playerUpdate(dt){
   keyboard();const p=G.player;
-  p.invuln=Math.max(0,p.invuln-dt);p.attackCooldown=Math.max(0,p.attackCooldown-dt);p.noise=Math.max(0,p.noise-dt*.8);p.hitBoost=Math.max(0,p.hitBoost-dt);
-  const doorBusy=G.updateDoorActor?.(p)||false;
-  const moving=Math.hypot(S.input.x,S.input.y)>.1,sprinting=!doorBusy&&S.input.sprint&&moving&&p.stamina>.5;
+  p.invuln=Math.max(0,p.invuln-dt);p.attackCooldown=Math.max(0,p.attackCooldown-dt);p.noise=Math.max(0,p.noise-dt*.8);p.hitBoost=Math.max(0,p.hitBoost-dt);p.stun=Math.max(0,(p.stun||0)-dt);p.mobilityCooldown=Math.max(0,(p.mobilityCooldown||0)-dt);
+  const doorBusy=G.updateDoorActor?.(p)||false,stunned=(p.stun||0)>0;
+  const moving=Math.hypot(S.input.x,S.input.y)>.1,sprinting=!doorBusy&&!stunned&&S.input.sprint&&moving&&p.stamina>.5;
   let speed=(sprinting?p.runSpeed:p.speed)*(S.role==='survivor'&&p.health===1?.9:1)*G.boostMultiplier(p);
   if(sprinting){p.stamina=Math.max(0,p.stamina-(S.role==='monster'?22:32)*dt);p.noise=Math.max(p.noise,.8);}else p.stamina=Math.min(p.maxStamina,p.stamina+18*dt);
-  if(!doorBusy&&moving){p.dirX=S.input.x;p.dirY=S.input.y;p.anim+=dt*(sprinting?9:5.5);G.move(p,S.input.x*speed*dt,S.input.y*speed*dt);}else p.anim+=dt*.65;
-  if(S.input.action){if(!doorBusy)interact();S.input.action=false;}
-  if(S.input.attack){if(!doorBusy&&S.role==='monster')G.monsterAttack(p,true);S.input.attack=false;}
+  if(!doorBusy&&!stunned&&moving){p.dirX=S.input.x;p.dirY=S.input.y;p.anim+=dt*(sprinting?9:5.5);G.move(p,S.input.x*speed*dt,S.input.y*speed*dt);}else p.anim+=dt*.65;
+  if(S.input.action){if(!doorBusy&&!stunned)interact();S.input.action=false;}
+  if(S.input.attack){if(!doorBusy&&!stunned&&S.role==='monster')G.monsterAttack(p,true);S.input.attack=false;}
   const z=G.zoneAt(p.x,p.y);if(z){p.zone=z.id;U.zoneLabel.textContent=z.name;}
   U.staminaFill.style.width=`${p.stamina}%`;G.updateStatusHud();
   let text='';
-  if(p.doorAction){const pc=Math.round((G.doorActionProgress?.(p)||0)*100);text=`${G.doorActionLabel?.(p)||'PORTA'}  ${pc}%`;}
+  if(stunned)text='ATORDOADO';
+  else if(p.doorAction){const pc=Math.round((G.doorActionProgress?.(p)||0)*100);text=`${G.doorActionLabel?.(p)||'PORTA'}  ${pc}%`;}
   else if(S.role==='survivor'){const c=nearCell();if(c)text='[E] PEGAR CÉLULA';else if(p.cells===3&&Math.hypot(p.x-G.extraction.x,p.y-G.extraction.y)<42)text='[E] EXTRAIR';}
+  if(!text)text=G.contextHint?.(p)||'';
   if(!text){const d=G.nearDoorRaw?G.nearDoorRaw(p):G.nearDoor(p);if(d)text='[E] '+(d.open?'FECHAR PORTA':'ABRIR PORTA');}
   U.hint.textContent=text;U.hint.classList.toggle('show',!!text);
 }
