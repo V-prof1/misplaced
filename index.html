@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#050607" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>MISPLACED — Alpha 0.3.1</title>
-  <link rel="stylesheet" href="style.css?v=031" />
+  <title>MISPLACED — Alpha 0.4.0</title>
+  <link rel="stylesheet" href="style.css?v=040" />
 </head>
 <body>
   <div id="app">
@@ -22,7 +22,7 @@
 
     <section id="menu" class="panel visible">
       <div class="brand">
-        <span class="eyebrow">OFFLINE / ALPHA 0.3.1</span>
+        <span class="eyebrow">OFFLINE / ALPHA 0.4.0</span>
         <h1>MISPLACED</h1>
         <p>BLACKRIDGE FACILITY</p>
       </div>
@@ -31,18 +31,18 @@
         <button class="role-card" data-role="survivor">
           <span class="role-icon survivor-icon"></span>
           <strong>SOBREVIVENTE</strong>
-          <small>Encontre 3 células de energia e alcance a extração. Use portas, barreiras e vaults para sobreviver.</small>
+          <small>Encontre 3 células, use itens de um uso, portas, barreiras e vaults para criar vantagem e escapar.</small>
         </button>
 
         <button class="role-card monster" data-role="monster">
           <span class="role-icon monster-icon"></span>
           <strong>THE MISPLACED</strong>
-          <small>Persiga os 4 sobreviventes, corte rotas, destrua barreiras derrubadas e force passagens.</small>
+          <small>Use Ecos do Vazio para rastrear movimento e Passo Deslocado para encurtar perseguições.</small>
         </button>
       </div>
 
       <div class="menu-note">
-        <b>Alpha 0.3.1:</b> dois vazios sem zona foram selados; bots sobreviventes ganharam melhor ritmo de perseguição, mais stamina, jukes reativos e maior duração da adrenalina pós-hit.
+        <b>Alpha 0.4.0:</b> duas habilidades para The Misplaced e quatro itens de sobrevivente. Bots também procuram, coletam e usam itens de forma situacional; o Monster Bot usa as próprias habilidades.
       </div>
     </section>
 
@@ -70,6 +70,9 @@
         <b id="objectiveCount">0 / 3</b>
       </div>
 
+      <div id="powerHud"></div>
+      <div id="itemHud"></div>
+
       <div id="statusWrap">
         <span id="statusLabel">CONDIÇÃO</span>
         <b id="statusValue">ESTÁVEL</b>
@@ -88,21 +91,26 @@
       <button id="actionBtn" class="touch-btn action">E</button>
       <button id="sprintBtn" class="touch-btn sprint">RUN</button>
       <button id="attackBtn" class="touch-btn attack hidden">ATK</button>
+      <button id="itemBtn" class="touch-btn item hidden">ITEM</button>
+      <button id="senseBtn" class="touch-btn ability sense hidden">SENSE</button>
+      <button id="rushBtn" class="touch-btn ability rush hidden">RUSH</button>
     </div>
 
     <div id="toast"></div>
     <div id="damageFlash"></div>
   </div>
 
-  <script src="src/core.js?v=031"></script>
-  <script src="src/mapfix.js?v=031"></script>
-  <script src="src/ai.js?v=031"></script>
-  <script src="src/brain.js?v=031"></script>
-  <script src="src/interactables.js?v=031"></script>
-  <script src="src/spawnfix.js?v=031"></script>
-  <script src="src/doors.js?v=031"></script>
-  <script src="src/balance.js?v=031"></script>
-  <script src="src/render.js?v=031"></script>
-  <script src="src/main.js?v=031"></script>
+  <script src="src/core.js?v=040"></script>
+  <script src="src/mapfix.js?v=040"></script>
+  <script src="src/ai.js?v=040"></script>
+  <script src="src/brain.js?v=040"></script>
+  <script src="src/interactables.js?v=040"></script>
+  <script src="src/spawnfix.js?v=040"></script>
+  <script src="src/doors.js?v=040"></script>
+  <script src="src/balance.js?v=040"></script>
+  <script src="src/render.js?v=040"></script>
+  <script src="src/items.js?v=040"></script>
+  <script src="src/abilities.js?v=040"></script>
+  <script src="src/main.js?v=040"></script>
 </body>
 </html>
