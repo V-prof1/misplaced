@@ -4,7 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#050607" />
-  <title>MISPLACED — Offline Prototype 0.1.1</title>
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>MISPLACED — Alpha 0.2</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,29 +15,45 @@
     <div id="scanlines"></div>
     <div id="vignette"></div>
 
+    <div id="rotateGate">
+      <div class="rotate-icon">↻</div>
+      <strong>GIRE O CELULAR</strong>
+      <span>MISPLACED foi feito para jogar na horizontal.</span>
+    </div>
+
     <section id="menu" class="panel visible">
       <div class="brand">
-        <span class="eyebrow">OFFLINE PROTOTYPE / ALPHA 0.1.1</span>
+        <span class="eyebrow">OFFLINE / ALPHA 0.2</span>
         <h1>MISPLACED</h1>
-        <p>Blackridge Facility</p>
+        <p>BLACKRIDGE FACILITY</p>
       </div>
 
       <div class="role-grid">
         <button class="role-card" data-role="survivor">
           <span class="role-icon survivor-icon"></span>
           <strong>SOBREVIVENTE</strong>
-          <small>Você + 3 bots contra The Misplaced</small>
+          <small>Encontre 3 células de energia e alcance a extração. O monstro é controlado pela IA.</small>
         </button>
 
         <button class="role-card monster" data-role="monster">
           <span class="role-icon monster-icon"></span>
-          <strong>MONSTRO</strong>
-          <small>Você caça 4 sobreviventes controlados pela IA</small>
+          <strong>THE MISPLACED</strong>
+          <small>Você é o monstro. Persiga e elimine os 4 sobreviventes antes que escapem.</small>
         </button>
       </div>
 
       <div class="menu-note">
-        <b>Objetivo deste build:</b> testar escala, câmera, colisão, portas, IA e visão bloqueada por cômodos.
+        <b>Alpha 0.2:</b> visão por cômodos, combate offline, IA atravessando portas, objetivo completo e ambientação reforçada.
+      </div>
+    </section>
+
+    <section id="result" class="panel result-panel">
+      <span class="eyebrow">RELATÓRIO DA PARTIDA</span>
+      <h2 id="resultTitle">FIM</h2>
+      <p id="resultText"></p>
+      <div class="result-actions">
+        <button id="retryBtn">JOGAR DE NOVO</button>
+        <button id="resultMenuBtn">MENU</button>
       </div>
     </section>
 
@@ -49,7 +66,15 @@
         <button id="menuBtn" title="Voltar ao menu">☰</button>
       </div>
 
-      <div id="objective">EXPLORE BLACKRIDGE</div>
+      <div id="objective">
+        <span id="objectiveText">ENCONTRE AS CÉLULAS</span>
+        <b id="objectiveCount">0 / 3</b>
+      </div>
+
+      <div id="statusWrap">
+        <span id="statusLabel">CONDIÇÃO</span>
+        <b id="statusValue">ESTÁVEL</b>
+      </div>
 
       <div id="staminaWrap">
         <span>STAMINA</span>
@@ -65,9 +90,11 @@
       </div>
       <button id="actionBtn" class="touch-btn action">E</button>
       <button id="sprintBtn" class="touch-btn sprint">RUN</button>
+      <button id="attackBtn" class="touch-btn attack hidden">ATK</button>
     </div>
 
     <div id="toast"></div>
+    <div id="damageFlash"></div>
   </div>
 
   <script src="game.js"></script>
