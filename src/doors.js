@@ -31,17 +31,13 @@ for(const d of G.doors){
   Object.defineProperty(d,'open',{
     enumerable:true,configurable:true,
     get(){return flushDoor(d);},
-    set(v){
-      // Resets between rounds are immediate. Runtime changes must use requestDoor.
-      if(!S.running){d._open=!!v;clearDoor(d);d.cooldownUntil=0;}
-    }
+    set(v){if(!S.running){d._open=!!v;clearDoor(d);d.cooldownUntil=0;}}
   });
 }
 
 G.requestDoor=(actor,d,wantOpen)=>{
   if(!actor||!d)return false;
-  flushDoor(d);
-  wantOpen=!!wantOpen;
+  flushDoor(d);wantOpen=!!wantOpen;
   if(d._open===wantOpen)return false;
   const now=performance.now();
   if(now<(d.cooldownUntil||0))return false;
@@ -66,8 +62,7 @@ G.updateDoorActor=actor=>{
   const d=G.doors.find(x=>x.id===actor.doorAction.doorId);
   if(!d){actor.doorAction=null;return false;}
   if(actorDistance(actor,d)>64){G.cancelDoorAction(actor);return false;}
-  flushDoor(d);
-  return !!actor.doorAction;
+  flushDoor(d);return !!actor.doorAction;
 };
 G.doorActionProgress=actor=>{
   if(!actor?.doorAction)return 0;
@@ -76,15 +71,9 @@ G.doorActionProgress=actor=>{
 };
 G.doorActionLabel=actor=>actor?.doorAction?(actor.doorAction.wantOpen?'ABRINDO PORTA':'FECHANDO PORTA'):'';
 
-// Keep the old API, but return a door proxy tied to the actor so old AI code
-// that does `d.open=true` now starts a timed interaction instead of teleport-opening it.
 const rawNearDoor=(e,range=50)=>{
   let best=null,bd=999;
-  for(const d of G.doors){
-    flushDoor(d);
-    const dist=actorDistance(e,d);
-    if(dist<range&&dist<bd){best=d;bd=dist;}
-  }
+  for(const d of G.doors){flushDoor(d);const dist=actorDistance(e,d);if(dist<range&&dist<bd){best=d;bd=dist;}}
   return best;
 };
 G.nearDoorRaw=rawNearDoor;
@@ -99,15 +88,22 @@ G.nearDoor=(actor,range=50)=>{
   byActor.set(d.id,p);return p;
 };
 
-// Door interactions root the actor briefly; this makes the opening delay matter.
 const baseMove=G.move;
-G.move=(e,dx,dy)=>{
-  if(e?.doorAction){G.updateDoorActor(e);if(e.doorAction)return 0;}
-  return baseMove(e,dx,dy);
-};
+G.move=(e,dx,dy)=>{if(e?.doorAction){G.updateDoorActor(e);if(e.doorAction)return 0;}return baseMove(e,dx,dy);};
 
-function zonesMatchDoor(d,a,b){
-  return a&&b&&a.id!==b.id&&d.zones.includes(a.id)&&d.zones.includes(b.id);
+// Taking a hit cancels an unfinished door interaction, so survivors cannot tank a hit
+// while magically finishing the opening animation.
+const baseHitBoost=G.applyHitBoost;
+G.applyHitBoost=(victim,attacker)=>{G.cancelDoorAction(victim);return baseHitBoost(victim,attacker);};
+
+function zonesMatchDoor(d,a,b){return a&&b&&a.id!==b.id&&d.zones.includes(a.id)&&d.zones.includes(b.id);}
+function clearSight(a,b){
+  const dist=G.distance(a,b),steps=Math.max(3,Math.ceil(dist/12));
+  for(let i=1;i<steps;i++){
+    const t=i/steps,x=a.x+(b.x-a.x)*t,y=a.y+(b.y-a.y)*t;
+    if(G.isBlocked(x,y,2))return false;
+  }
+  return true;
 }
 function survivorDoorPlay(b,killer){
   if(!killer||b.doorAction||b.doorTrick>0)return false;
@@ -121,13 +117,11 @@ function survivorDoorPlay(b,killer){
   }
   return false;
 }
-function targetVelocity(t){
-  if(t===G.player)return{x:G.player.dirX||0,y:G.player.dirY||0};
-  return{x:t.velX||t.dirX||0,y:t.velY||t.dirY||0};
-}
+function targetVelocity(t){if(t===G.player)return{x:G.player.dirX||0,y:G.player.dirY||0};return{x:t.velX||t.dirX||0,y:t.velY||t.dirY||0};}
 function monsterDoorPlay(m,target){
   if(!target||m.doorAction||m.doorTrick>0)return false;
   const mz=G.zoneAt(m.x,m.y),tz=G.zoneAt(target.x,target.y);if(!mz||!tz||mz.id!==tz.id||mz.id==='corridor')return false;
+  if(!(m.memoryTime>0||clearSight(m,target)))return false;
   for(const d of G.doors){
     if(!d.open||!d.zones.includes(mz.id)||actorDistance(m,d)>44)continue;
     const c=center(d),md=actorDistance(m,d),td=actorDistance(target,d);
@@ -146,14 +140,11 @@ G.updateBots=dt=>{
   const monsterBot=G.bots.find(b=>b.alive&&b.role==='monster');
   for(const b of G.bots){
     if(!b.alive)continue;
-    b.doorTrick=Math.max(0,(b.doorTrick||0)-dt);
-    G.updateDoorActor(b);
+    b.doorTrick=Math.max(0,(b.doorTrick||0)-dt);G.updateDoorActor(b);
     if(b.role==='survivor'){
-      const killer=S.role==='monster'?G.player:monsterBot;
-      if(killer)survivorDoorPlay(b,killer);
+      const killer=S.role==='monster'?G.player:monsterBot;if(killer)survivorDoorPlay(b,killer);
     }else if(b.role==='monster'){
-      const target=S.role==='survivor'&&G.player.health>0?G.player:null;
-      if(target)monsterDoorPlay(b,target);
+      const target=S.role==='survivor'&&G.player.health>0?G.player:null;if(target)monsterDoorPlay(b,target);
     }
   }
   baseUpdateBots(dt);
