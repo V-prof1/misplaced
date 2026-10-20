@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#050607" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>MISPLACED — Alpha 0.2.5</title>
-  <link rel="stylesheet" href="style.css?v=025" />
+  <title>MISPLACED — Alpha 0.3.0</title>
+  <link rel="stylesheet" href="style.css?v=030" />
 </head>
 <body>
   <div id="app">
@@ -23,7 +23,7 @@
 
     <section id="menu" class="panel visible">
       <div class="brand">
-        <span class="eyebrow">OFFLINE / ALPHA 0.2.5</span>
+        <span class="eyebrow">OFFLINE / ALPHA 0.3.0</span>
         <h1>MISPLACED</h1>
         <p>BLACKRIDGE FACILITY</p>
       </div>
@@ -32,18 +32,18 @@
         <button class="role-card" data-role="survivor">
           <span class="role-icon survivor-icon"></span>
           <strong>SOBREVIVENTE</strong>
-          <small>Encontre 3 células de energia e alcance a extração. O monstro é controlado pela IA.</small>
+          <small>Encontre 3 células de energia e alcance a extração. Use portas, barreiras e vaults para sobreviver.</small>
         </button>
 
         <button class="role-card monster" data-role="monster">
           <span class="role-icon monster-icon"></span>
           <strong>THE MISPLACED</strong>
-          <small>Você é o monstro. Persiga e elimine os 4 sobreviventes antes que escapem.</small>
+          <small>Persiga os 4 sobreviventes, corte rotas, destrua barreiras derrubadas e force passagens.</small>
         </button>
       </div>
 
       <div class="menu-note">
-        <b>Alpha 0.2.5:</b> spawns dos bots agora são validados para nunca nascerem dentro de móveis; portas abertas permitem espiar parte da sala seguinte e a passagem de manutenção foi redesenhada para ficar claramente reconhecível.
+        <b>Alpha 0.3.0:</b> leitura visual do mapa refeita, obstáculos com silhuetas e sombras mais claras, novas barreiras derrubáveis, vaults de manutenção, stun no killer e IA usando esses recursos durante perseguições.
       </div>
     </section>
 
@@ -97,12 +97,13 @@
     <div id="damageFlash"></div>
   </div>
 
-  <script src="src/core.js?v=025"></script>
-  <script src="src/ai.js?v=025"></script>
-  <script src="src/brain.js?v=025"></script>
-  <script src="src/spawnfix.js?v=025"></script>
-  <script src="src/doors.js?v=025"></script>
-  <script src="src/render.js?v=025"></script>
-  <script src="src/main.js?v=025"></script>
+  <script src="src/core.js?v=030"></script>
+  <script src="src/ai.js?v=030"></script>
+  <script src="src/brain.js?v=030"></script>
+  <script src="src/interactables.js?v=030"></script>
+  <script src="src/spawnfix.js?v=030"></script>
+  <script src="src/doors.js?v=030"></script>
+  <script src="src/render.js?v=030"></script>
+  <script src="src/main.js?v=030"></script>
 </body>
 </html>
