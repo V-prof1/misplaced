@@ -1,11 +1,11 @@
 'use strict';
 (() => {
 const G=window.MISPLACED;
-const V='063';
+const V='064';
 G.spriteAssets={ready:false,survivors:null,monster:null,error:null};
 G.spriteAssetMeta={
-  survivor:{cellW:24,cellH:32,colsPerCharacter:8,rows:{idle:0,walk:1,run:2,injured:3,item:4,interact:5,death:6},characters:{Mara:0,Eli:1,Nox:2,Iris:3}},
-  monster:{cellW:36,cellH:48,rows:{idle:0,walk:1,run:2,rush:3,attack:4,stun:5,blackout:6,death:7}}
+  survivor:{cellW:24,cellH:32,phases:6,colsPerCharacter:8,rows:{idle:0,walk:1,run:2,injured:3,item:4,interact:5,death:6},characters:{Mara:0,Eli:1,Nox:2,Iris:3}},
+  monster:{cellW:36,cellH:48,phases:6,rows:{idle:0,walk:1,run:2,rush:3,attack:4,stun:5,blackout:6,death:7}}
 };
 async function part(path){
   const r=await fetch(`assets/sprites/${path}?v=${V}`,{cache:'force-cache'});
