@@ -22,7 +22,7 @@ const survivorParts=[
 const monsterParts=[
   'misplaced.b64.0a','misplaced.b64.0b','misplaced.b64.0c','misplaced.b64.0d',
   'misplaced.b64.1a','misplaced.b64.1b','misplaced.b64.1c','misplaced.b64.1d',
-  'misplaced.b64.2','misplaced.b64.3a','misplaced.b64.3b','misplaced.b64.3c'
+  'misplaced.b64.2','misplaced.b64.3aa','misplaced.b64.3b','misplaced.b64.3c'
 ];
 Promise.all([
   join(survivorParts).then(imageFromBase64),
