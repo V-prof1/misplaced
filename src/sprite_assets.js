@@ -22,7 +22,9 @@ const survivorParts=[
 const monsterParts=[
   'misplaced.b64.0a','misplaced.b64.0b','misplaced.b64.0c','misplaced.b64.0d',
   'misplaced.b64.1a','misplaced.b64.1b','misplaced.b64.1c','misplaced.b64.1d',
-  'misplaced.b64.2','misplaced.b64.3aa','misplaced.b64.3b','misplaced.b64.3c'
+  'misplaced.b64.2',
+  'misplaced.b64.3a0','misplaced.b64.3a1','misplaced.b64.3a2','misplaced.b64.3a3',
+  'misplaced.b64.3b','misplaced.b64.3c'
 ];
 Promise.all([
   join(survivorParts).then(imageFromBase64),
@@ -30,7 +32,9 @@ Promise.all([
 ]).then(([survivors,monster])=>{
   if(survivors.width!==1536||survivors.height!==280)throw new Error(`Atlas survivor inesperado: ${survivors.width}x${survivors.height}`);
   if(monster.width!==576||monster.height!==420)throw new Error(`Atlas monster inesperado: ${monster.width}x${monster.height}`);
-  G.spriteAssets.survivors=survivors;G.spriteAssets.monster=monster;G.spriteAssets.ready=true;
+  G.spriteAssets.survivors=survivors;
+  G.spriteAssets.monster=monster;
+  G.spriteAssets.ready=true;
   dispatchEvent(new Event('misplaced-sprite-assets-ready'));
 }).catch(err=>{G.spriteAssets.error=err;console.error('[MISPLACED] sprite atlas:',err);});
 })();
