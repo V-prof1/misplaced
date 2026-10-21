@@ -5,123 +5,45 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#050607" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>MISPLACED — Alpha 0.5.2</title>
-  <link rel="stylesheet" href="style.css?v=052" />
+  <title>MISPLACED — Alpha 0.6.0</title>
+  <link rel="stylesheet" href="style.css?v=060" />
+  <link rel="stylesheet" href="customization.css?v=060" />
 </head>
 <body>
   <div id="app">
     <canvas id="game" width="640" height="360" aria-label="MISPLACED"></canvas>
-    <div id="scanlines"></div>
-    <div id="vignette"></div>
-
-    <div id="rotateGate">
-      <div class="rotate-icon">↻</div>
-      <strong>GIRE O CELULAR</strong>
-      <span>MISPLACED foi feito para jogar na horizontal.</span>
-    </div>
-
+    <div id="scanlines"></div><div id="vignette"></div>
+    <div id="rotateGate"><div class="rotate-icon">↻</div><strong>GIRE O CELULAR</strong><span>MISPLACED foi feito para jogar na horizontal.</span></div>
     <section id="menu" class="panel visible">
-      <div class="brand">
-        <span class="eyebrow">OFFLINE / ALPHA 0.5.2</span>
-        <h1>MISPLACED</h1>
-        <p>BLACKRIDGE FACILITY</p>
-      </div>
-
+      <div class="brand"><span class="eyebrow">OFFLINE / ALPHA 0.6.0</span><h1>MISPLACED</h1><p>BLACKRIDGE FACILITY</p></div>
+      <button id="inventoryBtn" type="button">INVENTÁRIO / VISUAL</button>
       <div class="role-grid">
-        <button class="role-card" data-role="survivor">
-          <span class="role-icon survivor-icon"></span>
-          <strong>SOBREVIVENTE</strong>
-          <small>Encontre 3 células, use itens, rádio, portas, barreiras, vaults e rotas CRAWL para escapar.</small>
-        </button>
-
-        <button class="role-card monster" data-role="monster">
-          <span class="role-icon monster-icon"></span>
-          <strong>THE MISPLACED</strong>
-          <small>Use Ecos do Vazio, Passo Deslocado e Blackout para cortar rotas e pressionar a equipe.</small>
-        </button>
+        <button class="role-card" data-role="survivor"><span class="role-icon survivor-icon"></span><strong>SOBREVIVENTE</strong><small>Encontre 3 células, use itens, rádio, portas, barreiras, vaults e rotas CRAWL para escapar.</small></button>
+        <button class="role-card monster" data-role="monster"><span class="role-icon monster-icon"></span><strong>THE MISPLACED</strong><small>Use Ecos do Vazio, Passo Deslocado e Blackout para cortar rotas e pressionar a equipe.</small></button>
       </div>
-
-      <div class="menu-note">
-        <b>Alpha 0.5.2:</b> sprites redesenhados com silhuetas maiores, roupas e rostos mais detalhados, animação de passada, acessórios próprios para Mara/Eli/Nox/Iris e The Misplaced muito mais alto, assimétrico e perturbador.
-      </div>
+      <div class="menu-note"><b>Alpha 0.6.0:</b> animações refeitas com passadas de múltiplas fases, diagonais, corrida, idle, ferimento, cabelo em movimento e ataque do Misplaced. O inventário permite montar seu Survivor; os bots recebem combinações aleatórias a cada partida.</div>
     </section>
-
-    <section id="result" class="panel result-panel">
-      <span class="eyebrow">RELATÓRIO DA PARTIDA</span>
-      <h2 id="resultTitle">FIM</h2>
-      <p id="resultText"></p>
-      <div class="result-actions">
-        <button id="retryBtn">JOGAR DE NOVO</button>
-        <button id="resultMenuBtn">MENU</button>
-      </div>
-    </section>
-
-    <div id="hud" class="hidden">
-      <div class="hud-top">
-        <div>
-          <span id="roleLabel">SURVIVOR</span>
-          <b id="zoneLabel">CORREDOR CENTRAL</b>
+    <section id="customizer" class="customizer hidden" aria-label="Inventário e personalização">
+      <div class="customizer-card">
+        <div class="customizer-head"><div><strong>INVENTÁRIO // VISUAL</strong><span>BLACKRIDGE PERSONNEL LOADOUT</span></div><button id="customizerClose" class="customizer-close" type="button" aria-label="Fechar">×</button></div>
+        <div class="customizer-grid">
+          <div class="customizer-preview-wrap"><canvas id="customizerPreview" width="180" height="220"></canvas></div>
+          <div class="customizer-options">
+            <div class="custom-group wide"><label>CABELO</label><div id="hairChoices" class="choice-row"></div></div>
+            <div class="custom-group"><label>COR DO CABELO</label><div id="hairColorSwatches" class="swatch-row"></div></div>
+            <div class="custom-group"><label>COR DOS OLHOS</label><div id="eyeColorSwatches" class="swatch-row"></div></div>
+            <div class="custom-group wide"><label>ROUPA</label><div id="outfitChoices" class="choice-row"></div></div>
+            <div class="custom-group wide"><label>COR DA ROUPA</label><div id="outfitColorSwatches" class="swatch-row"></div></div>
+          </div>
         </div>
-        <button id="menuBtn" title="Voltar ao menu">☰</button>
+        <div class="customizer-actions"><button id="customizerRandom" type="button">ALEATÓRIO</button><button id="customizerDone" type="button">USAR VISUAL</button></div>
       </div>
-
-      <div id="objective">
-        <span id="objectiveText">ENCONTRE AS CÉLULAS</span>
-        <b id="objectiveCount">0 / 3</b>
-      </div>
-
-      <div id="powerHud"></div>
-      <div id="itemHud"></div>
-
-      <div id="statusWrap">
-        <span id="statusLabel">CONDIÇÃO</span>
-        <b id="statusValue">ESTÁVEL</b>
-      </div>
-
-      <div id="staminaWrap">
-        <span>STAMINA</span>
-        <div id="staminaBar"><i></i></div>
-      </div>
-
-      <div id="hint"></div>
-    </div>
-
-    <div id="mobileControls" class="hidden">
-      <div id="joystick" class="joystick"><div class="stick"></div></div>
-      <div id="flashJoy" class="flash-joystick hidden" aria-label="Direção da lanterna">
-        <div class="flash-ring"></div>
-        <div class="flash-stick"><span></span></div>
-      </div>
-      <button id="actionBtn" class="touch-btn action">E</button>
-      <button id="sprintBtn" class="touch-btn sprint">RUN</button>
-      <button id="attackBtn" class="touch-btn attack hidden">ATK</button>
-      <button id="itemBtn" class="touch-btn item hidden">ITEM</button>
-      <button id="senseBtn" class="touch-btn ability sense hidden">SENSE</button>
-      <button id="rushBtn" class="touch-btn ability rush hidden">RUSH</button>
-      <button id="blackoutBtn" class="touch-btn ability blackout hidden">BLACK</button>
-    </div>
-
-    <div id="toast"></div>
-    <div id="damageFlash"></div>
+    </section>
+    <section id="result" class="panel result-panel"><span class="eyebrow">RELATÓRIO DA PARTIDA</span><h2 id="resultTitle">FIM</h2><p id="resultText"></p><div class="result-actions"><button id="retryBtn">JOGAR DE NOVO</button><button id="resultMenuBtn">MENU</button></div></section>
+    <div id="hud" class="hidden"><div class="hud-top"><div><span id="roleLabel">SURVIVOR</span><b id="zoneLabel">CORREDOR CENTRAL</b></div><button id="menuBtn" title="Voltar ao menu">☰</button></div><div id="objective"><span id="objectiveText">ENCONTRE AS CÉLULAS</span><b id="objectiveCount">0 / 3</b></div><div id="powerHud"></div><div id="itemHud"></div><div id="statusWrap"><span id="statusLabel">CONDIÇÃO</span><b id="statusValue">ESTÁVEL</b></div><div id="staminaWrap"><span>STAMINA</span><div id="staminaBar"><i></i></div></div><div id="hint"></div></div>
+    <div id="mobileControls" class="hidden"><div id="joystick" class="joystick"><div class="stick"></div></div><div id="flashJoy" class="flash-joystick hidden" aria-label="Direção da lanterna"><div class="flash-ring"></div><div class="flash-stick"><span></span></div></div><button id="actionBtn" class="touch-btn action">E</button><button id="sprintBtn" class="touch-btn sprint">RUN</button><button id="attackBtn" class="touch-btn attack hidden">ATK</button><button id="itemBtn" class="touch-btn item hidden">ITEM</button><button id="senseBtn" class="touch-btn ability sense hidden">SENSE</button><button id="rushBtn" class="touch-btn ability rush hidden">RUSH</button><button id="blackoutBtn" class="touch-btn ability blackout hidden">BLACK</button></div>
+    <div id="toast"></div><div id="damageFlash"></div>
   </div>
-
-  <script src="src/core.js?v=052"></script>
-  <script src="src/mapfix.js?v=052"></script>
-  <script src="src/ai.js?v=052"></script>
-  <script src="src/brain.js?v=052"></script>
-  <script src="src/interactables.js?v=052"></script>
-  <script src="src/spawnfix.js?v=052"></script>
-  <script src="src/doors.js?v=052"></script>
-  <script src="src/door_collision.js?v=052"></script>
-  <script src="src/balance.js?v=052"></script>
-  <script src="src/render.js?v=052"></script>
-  <script src="src/survivor_routes.js?v=052"></script>
-  <script src="src/items.js?v=052"></script>
-  <script src="src/abilities.js?v=052"></script>
-  <script src="src/sprites.js?v=052"></script>
-  <script src="src/blackout.js?v=052"></script>
-  <script src="src/radio.js?v=052"></script>
-  <script src="src/audio.js?v=052"></script>
-  <script src="src/main.js?v=052"></script>
+  <script src="src/core.js?v=060"></script><script src="src/mapfix.js?v=060"></script><script src="src/ai.js?v=060"></script><script src="src/brain.js?v=060"></script><script src="src/interactables.js?v=060"></script><script src="src/spawnfix.js?v=060"></script><script src="src/customization.js?v=060"></script><script src="src/doors.js?v=060"></script><script src="src/door_collision.js?v=060"></script><script src="src/balance.js?v=060"></script><script src="src/render.js?v=060"></script><script src="src/survivor_routes.js?v=060"></script><script src="src/items.js?v=060"></script><script src="src/abilities.js?v=060"></script><script src="src/sprites.js?v=060"></script><script src="src/blackout.js?v=060"></script><script src="src/radio.js?v=060"></script><script src="src/audio.js?v=060"></script><script src="src/main.js?v=060"></script>
 </body>
 </html>
