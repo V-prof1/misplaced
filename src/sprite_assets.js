@@ -1,7 +1,7 @@
 'use strict';
 (() => {
 const G=window.MISPLACED;
-const V='061';
+const V='061-final';
 G.spriteAssets={ready:false,survivors:null,monster:null,error:null};
 G.spriteAssetMeta={
   survivor:{cellW:48,cellH:56,colsPerCharacter:8,rows:{idle:0,walk:1,run:2,injured:3,item:4},characters:{Mara:0,Eli:1,Nox:2,Iris:3}},
