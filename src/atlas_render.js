@@ -3,7 +3,10 @@
 const G=window.MISPLACED;
 const baseRender=G.render;
 G.render=()=>{
-  if(!G.renderCustomEntities)return baseRender();
+  // Never hide the legacy entities until BOTH atlases are fully decoded and
+  // the custom renderer is available. This prevents invisible players on
+  // slower/mobile connections and also gives us a permanent safe fallback.
+  if(!G.spriteAssets?.ready||!G.renderCustomEntities)return baseRender();
   const alive=G.bots.map(b=>b.alive),role=G.player.role,health=G.player.health;
   try{
     for(const b of G.bots)b.alive=false;
@@ -13,6 +16,6 @@ G.render=()=>{
     for(let i=0;i<G.bots.length;i++)G.bots[i].alive=alive[i];
     G.player.role=role;G.player.health=health;
   }
-  if(G.spriteAssets?.ready)G.renderCustomEntities();
+  G.renderCustomEntities();
 };
 })();
