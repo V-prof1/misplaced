@@ -14,12 +14,22 @@ async function part(path){
 }
 async function join(paths){return (await Promise.all(paths.map(part))).join('');}
 function imageFromBase64(data){return new Promise((resolve,reject)=>{const img=new Image();img.decoding='async';img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('PNG de sprite inválido'));img.src='data:image/png;base64,'+data;});}
-const survivorParts=Array.from({length:6},(_,i)=>`survivors.b64.${i}`);
-const monsterParts=['misplaced.b64.0','misplaced.b64.1','misplaced.b64.2','misplaced.b64.3a','misplaced.b64.3b','misplaced.b64.3c'];
+const survivorParts=[
+  'survivors.b64.0','survivors.b64.1',
+  'survivors.b64.2a','survivors.b64.2b','survivors.b64.2c','survivors.b64.2d',
+  'survivors.b64.3','survivors.b64.4','survivors.b64.5'
+];
+const monsterParts=[
+  'misplaced.b64.0a','misplaced.b64.0b','misplaced.b64.0c','misplaced.b64.0d',
+  'misplaced.b64.1a','misplaced.b64.1b','misplaced.b64.1c','misplaced.b64.1d',
+  'misplaced.b64.2','misplaced.b64.3a','misplaced.b64.3b','misplaced.b64.3c'
+];
 Promise.all([
   join(survivorParts).then(imageFromBase64),
   join(monsterParts).then(imageFromBase64)
 ]).then(([survivors,monster])=>{
+  if(survivors.width!==1536||survivors.height!==280)throw new Error(`Atlas survivor inesperado: ${survivors.width}x${survivors.height}`);
+  if(monster.width!==576||monster.height!==420)throw new Error(`Atlas monster inesperado: ${monster.width}x${monster.height}`);
   G.spriteAssets.survivors=survivors;G.spriteAssets.monster=monster;G.spriteAssets.ready=true;
   dispatchEvent(new Event('misplaced-sprite-assets-ready'));
 }).catch(err=>{G.spriteAssets.error=err;console.error('[MISPLACED] sprite atlas:',err);});
